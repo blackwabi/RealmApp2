@@ -1,13 +1,18 @@
-package com.androidkotlincourse.realmapp2
+package com.androidkotlincourse.realmapp2.view
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
+import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.androidkotlincourse.realmapp2.R
+import com.androidkotlincourse.realmapp2.data.Dog
+import com.androidkotlincourse.realmapp2.view.add.AddFragment
+import com.androidkotlincourse.realmapp2.view.see.SeeFragment
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -26,13 +31,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-
         val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            this, drawer_layout, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
@@ -40,6 +42,33 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
         realm = Realm.getDefaultInstance()
+
+        fab.setOnClickListener {
+            val defaultDog = Dog()
+            defaultDog.age = 0
+            defaultDog.name = "DEFAULT"
+            defaultDog.color = "STANDARD"
+            realm.beginTransaction()
+            realm.insertOrUpdate(defaultDog)
+            realm.commitTransaction()
+            Snackbar.make(fab, "Added default dog", Snackbar.LENGTH_SHORT).show()
+        }
+
+        clearAllData()
+
+        navigateTo(AddFragment())
+    }
+
+    private fun clearAllData() {
+        realm.beginTransaction()
+        realm.where(Dog::class.java).findAll().deleteAllFromRealm()
+        realm.commitTransaction()
+    }
+
+    private fun navigateTo(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fragment_space, fragment)
+        transaction.commit()
     }
 
     override fun onBackPressed() {
@@ -69,23 +98,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
+            R.id.nav_add_dog -> {
+                navigateTo(AddFragment())
             }
-            R.id.nav_gallery -> {
-
-            }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
-            R.id.nav_send -> {
-
+            R.id.nav_see_dogs -> {
+                navigateTo(SeeFragment())
             }
         }
 
