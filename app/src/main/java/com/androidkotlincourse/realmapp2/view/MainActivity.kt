@@ -11,9 +11,11 @@ import android.view.Menu
 import android.view.MenuItem
 import com.androidkotlincourse.realmapp2.R
 import com.androidkotlincourse.realmapp2.data.Dog
+import com.androidkotlincourse.realmapp2.data.Person
 import com.androidkotlincourse.realmapp2.view.add.AddFragment
 import com.androidkotlincourse.realmapp2.view.see.SeeFragment
 import io.realm.Realm
+import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -61,7 +63,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun clearAllData() {
         realm.beginTransaction()
-        realm.where(Dog::class.java).findAll().deleteAllFromRealm()
+        realm.where<Dog>().findAll().deleteAllFromRealm()
+        realm.where<Person>().findAll().deleteAllFromRealm()
         realm.commitTransaction()
     }
 
@@ -109,4 +112,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
 }

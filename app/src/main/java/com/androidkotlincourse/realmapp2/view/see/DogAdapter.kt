@@ -9,11 +9,12 @@ import com.androidkotlincourse.realmapp2.R
 import com.androidkotlincourse.realmapp2.data.Dog
 import io.realm.Realm
 import io.realm.RealmResults
+import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.list_item.view.*
 
 class DogAdapter(val realm: Realm): RecyclerView.Adapter<DogAdapter.DogHolder>()
 {
-    private val dogResults: RealmResults<Dog> = realm.where(Dog::class.java).findAll()
+    private val dogResults: RealmResults<Dog> = realm.where<Dog>().findAll()
     private val listener = { results: RealmResults<Dog> ->
         notifyDataSetChanged()
     }
